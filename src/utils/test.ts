@@ -1,5 +1,7 @@
 import { CreateCountryDto } from 'src/core/dtos';
 import { CountryEntity } from 'src/core/entities';
+import { CreateTechnologyDto } from 'src/modules/developers/dto/create-technology.dto';
+import { TechnologyEntity } from 'src/modules/developers/entities/technology.entity';
 
 export class TestStatic {
   static countryData(): CountryEntity {
@@ -36,5 +38,23 @@ export class TestStatic {
     });
 
     return countries;
+  }
+
+  static technologyDto(): CreateTechnologyDto {
+    const technologyBodyDto = new CreateTechnologyDto();
+    technologyBodyDto.name = 'Kotlin';
+
+    return technologyBodyDto;
+  }
+
+  static giveMeAValidTechnology(): TechnologyEntity {
+    const technology = new TechnologyEntity();
+    technology.id = 1;
+    technology.name = 'Kotlin';
+    technology.createdAt = new Date();
+    technology.updatedAt = new Date();
+    technology.deletedAt = null;
+
+    return technology;
   }
 }
