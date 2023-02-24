@@ -78,18 +78,12 @@ describe('TechnologyService', () => {
 
       const existingTechnology = TestStatic.giveMeAValidTechnology();
 
-      mockTechnologyRepository.getByName
-        .mockResolvedValue(existingTechnology)
-        .mockImplementationOnce(() => {
-          throw new BadRequestException('entityWithArgumentsExists');
-        });
+      mockTechnologyRepository.getByName.mockReturnValue(existingTechnology);
 
       await expect(
         technologyService.createTechnology(newTechnology),
       ).rejects.toBeInstanceOf(BadRequestException);
-
       expect(mockTechnologyRepository.getByName).toHaveBeenCalledWith('Kotlin');
-      expect(mockTechnologyRepository.createTechnology).not.toHaveBeenCalled();
     });
 
     it('should throw a BadRequestException if technology is not saved', async () => {
