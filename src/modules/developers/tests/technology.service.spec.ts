@@ -3,7 +3,6 @@ import { TechnologyService } from './../services/technology.service';
 import { TechnologyEntity } from './../entities/technology.entity';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateTechnologyDto } from '../dto/create-technology.dto';
 import { TestStatic } from 'src/utils/test';
 
 describe('TechnologyService', () => {
@@ -87,13 +86,10 @@ describe('TechnologyService', () => {
     });
 
     it('should throw a BadRequestException if technology is not saved', async () => {
-      const newTechnology = new CreateTechnologyDto();
-      newTechnology.name = 'Kotlin';
+      const newTechnology = TestStatic.technologyDto();
 
-      jest.spyOn(mockTechnologyRepository, 'getByName').mockResolvedValue(null);
-      jest
-        .spyOn(mockTechnologyRepository, 'createTechnology')
-        .mockResolvedValue(null);
+      mockTechnologyRepository.getByName.mockResolvedValue(null);
+      mockTechnologyRepository.createTechnology.mockResolvedValue(null);
 
       await expect(
         technologyService.createTechnology(newTechnology),
@@ -103,6 +99,50 @@ describe('TechnologyService', () => {
       expect(mockTechnologyRepository.createTechnology).toHaveBeenCalledWith(
         newTechnology,
       );
+    });
+  });
+
+  describe('createManyTechnologies', () => {
+    it('should create multiple technologies', async () => {
+      const newTechnologies = [
+        TestStatic.technologyDto(),
+        TestStatic.technologyDto(),
+      ];
+      const savedTechnologies = [
+        TestStatic.giveMeAValidTechnology(),
+        TestStatic.giveMeAValidTechnology(),
+      ];
+      mockTechnologyRepository.createManyTechnologies.mockResolvedValue(
+        savedTechnologies,
+      );
+
+      const createdTechnologies =
+        await technologyService.createManyTechnologies(newTechnologies);
+
+      expect(createdTechnologies).toEqual(savedTechnologies);
+      expect(
+        mockTechnologyRepository.createManyTechnologies,
+      ).toHaveBeenCalledWith(newTechnologies);
+    });
+
+    it('should throw a BadRequestException if any technology already exists', async () => {
+      const newTechnologies = [
+        TestStatic.technologyDto(),
+        TestStatic.technologyDto(),
+      ];
+      mockTechnologyRepository.createManyTechnologies.mockRejectedValue(
+        new Error('Duplicate entry'),
+      );
+
+      await expect(
+        technologyService.createManyTechnologies(newTechnologies),
+      ).rejects.toThrowError(
+        new BadRequestException('entityWithArgumentsExists'),
+      );
+
+      expect(
+        mockTechnologyRepository.createManyTechnologies,
+      ).toHaveBeenCalledWith(newTechnologies);
     });
   });
 });

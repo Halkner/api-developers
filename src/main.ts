@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { setupApiDocs } from './common/api-docs';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { HttpExceptionFilter } from './core/http/http-exception.filter';
 import { TransformerInterceptor } from './core/http/http-response';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
