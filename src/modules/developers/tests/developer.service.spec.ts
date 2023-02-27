@@ -1,6 +1,5 @@
+import { TestStatic } from 'src/utils/test';
 import { UpdateDeveloperDto } from './../dto/update-developer.dto';
-import { UserEntity } from './../../users/entities/user.entity';
-import { CreateDeveloperDto } from './../dto/create-developer.dto';
 import { UserRepository } from './../../users/user.repository';
 import { TechnologyRepository } from './../repositories/technology.repository';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
@@ -10,8 +9,6 @@ import { DeveloperEntity } from '../entities/developer.entity';
 import { DeveloperService } from '../services/developer.service';
 import { TechnologyService } from '../services/technology.service';
 import { UserService } from 'src/modules/users/services/user.service';
-import { TechnologyEntity } from '../entities/technology.entity';
-import * as bcrypt from 'bcrypt';
 
 describe('DeveloperService', () => {
   let developerService: DeveloperService;
@@ -64,17 +61,7 @@ describe('DeveloperService', () => {
   });
 
   describe('findById', () => {
-    const mockDeveloper: DeveloperEntity = {
-      id: 1,
-      acceptedRemoteWork: false,
-      monthsOfExperience: 12,
-      user_id: 1,
-      user: null,
-      technologies: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-    };
+    const mockDeveloper = TestStatic.giveMeAValidDeveloper();
 
     it('should return a developer by id', async () => {
       mockDeveloperRepository.getById.mockResolvedValue(mockDeveloper);
@@ -96,47 +83,11 @@ describe('DeveloperService', () => {
   });
 
   describe('createDeveloper', () => {
-    const mockUser: UserEntity = {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@test.com',
-      salt: 'test123',
-      city_id: 1,
-      city: null,
-      active: true,
-      password: 'teste123',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      async checkPassword(password: string): Promise<boolean> {
-        const hash = await bcrypt.hash(password, this.salt);
-        return hash === this.password;
-      },
-    };
+    const mockUser = TestStatic.giveMeAValidUser();
 
-    const mockDeveloper: CreateDeveloperDto = {
-      user_id: 1,
-      acceptedRemoteWork: false,
-      monthsOfExperience: 12,
-      technologies: [1, 2],
-    };
+    const mockDeveloper = TestStatic.developerDto();
 
-    const mockTechnologyEntity: TechnologyEntity[] = [
-      {
-        id: 1,
-        name: 'Node.js',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-      {
-        id: 2,
-        name: 'React',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-    ];
+    const mockTechnologyEntity = TestStatic.giveMeAValidTechnologies();
 
     it('should create a new developer', async () => {
       mockDeveloperRepository.getByUser.mockResolvedValue(null);
@@ -221,40 +172,9 @@ describe('DeveloperService', () => {
       technologies: [1, 2],
     };
 
-    const mockUser: UserEntity = {
-      id: 1,
-      name: 'John Doe',
-      email: 'john.doe@test.com',
-      salt: 'test123',
-      city_id: 1,
-      city: null,
-      active: true,
-      password: 'teste123',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      async checkPassword(password: string): Promise<boolean> {
-        const hash = await bcrypt.hash(password, this.salt);
-        return hash === this.password;
-      },
-    };
+    const mockUser = TestStatic.giveMeAValidUser();
 
-    const mockTechnology: TechnologyEntity[] = [
-      {
-        id: 1,
-        name: 'Node.js',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-      {
-        id: 2,
-        name: 'React',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      },
-    ];
+    const mockTechnology = TestStatic.giveMeAValidTechnologies();
 
     const foundDeveloper: DeveloperEntity = {
       id: 1,
