@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
-  const PORT = configService.get<number>(process.env.PORT) || 3000;
+  const PORT = configService.get<number>('port') || 3000;
 
   app.useGlobalPipes(
     new ValidationPipe({
